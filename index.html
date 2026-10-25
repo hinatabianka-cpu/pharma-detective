@@ -1,155 +1,82 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f766e">
-<title>Pharma Detective 改良版｜薬剤師実務推理</title>
+<title>薬剤師の症例トレーニング</title>
 <style>
-:root{--ink:#17252a;--muted:#63747a;--teal:#0f766e;--teal2:#dff5ef;--paper:#f4f7f6;--line:#dbe5e2;--amber:#fff3d6;--red:#fff0ee}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;line-height:1.55}
-header{background:linear-gradient(135deg,#115e59,#0f766e);color:white;padding:22px 18px 26px;border-radius:0 0 24px 24px} .version{display:inline-block;background:#fff;color:#115e59;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:800;margin-bottom:5px} .guide{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin:12px 0 16px}.guide summary{font-weight:750;cursor:pointer}.guide p,.guide li{font-size:13px}.guide ul{padding-left:20px;margin-bottom:4px}
-header .eyebrow{font-size:12px;letter-spacing:.12em;opacity:.85}h1{font-size:25px;line-height:1.2;margin:7px 0}header p{margin:8px 0 0;font-size:14px;opacity:.95}
-main{max-width:760px;margin:0 auto;padding:16px 14px 42px}.notice{font-size:12px;color:#67521f;background:var(--amber);padding:11px 12px;border-radius:12px;margin-bottom:16px}
-h2{font-size:19px;margin:20px 0 10px}.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mode{border:1px solid var(--line);background:white;border-radius:15px;padding:14px;text-align:left;color:var(--ink);min-height:120px;cursor:pointer}.mode strong{display:block;font-size:15px;margin:5px 0}.mode span{font-size:12px;color:var(--muted)}.mode.active{border:2px solid var(--teal);background:#effbf7;padding:13px}
-.card{background:white;border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 3px 12px #173d3510}.casehead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.tag{display:inline-block;background:var(--teal2);color:#075e54;font-size:11px;font-weight:700;padding:4px 8px;border-radius:99px}.case-title{font-size:18px;font-weight:750;margin:8px 0 4px}.sub{font-size:13px;color:var(--muted)}.rx-title{font-weight:700;font-size:14px;margin:18px 0 8px}
-.rx-paper{border:1px solid #cfd7d4;background:#fffefb;padding:14px;border-radius:5px;box-shadow:0 2px 5px #0000000a}.rx-top{display:flex;justify-content:space-between;border-bottom:1px solid #7d8985;padding-bottom:8px;margin-bottom:8px;font-size:12px}.rx-label{font-size:11px;color:#596662}.rx-patient{font-weight:700;font-size:16px;margin:6px 0}.rx-table{width:100%;border-collapse:collapse;font-size:13px}.rx-table th,.rx-table td{border-bottom:1px solid #e2e7e4;padding:8px 5px;text-align:left;vertical-align:top}.rx-table th{font-size:11px;color:#56645f;font-weight:600}.rx-foot{font-size:11px;color:#68746f;margin-top:10px}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.info{background:#f7faf9;padding:9px 10px;border-radius:10px;font-size:13px}.info b{display:block;font-size:11px;color:var(--muted);margin-bottom:2px}
-.prompt{font-weight:750;margin:14px 0 8px}.options{display:grid;gap:8px}.option{display:flex;gap:9px;align-items:flex-start;padding:11px;border:1px solid var(--line);border-radius:11px;background:white;font-size:14px;cursor:pointer}.option:has(input:checked){border-color:var(--teal);background:#effbf7}.option input{margin-top:4px;accent-color:var(--teal)}
-textarea,input[type=text]{width:100%;font:inherit;border:1px solid #cbd8d4;border-radius:10px;padding:11px;background:white}textarea{min-height:105px;resize:vertical}
-.btnrow{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}.btn{border:0;border-radius:11px;padding:12px 16px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--teal);color:white}.secondary{background:#e8efec;color:#25413b}.result{display:none;margin-top:14px;border-radius:13px;padding:14px;background:#effbf7;border:1px solid #b8e3d6}.result h3{margin:0 0 8px;font-size:16px}.result p{margin:7px 0;font-size:14px}.result .caution{background:var(--amber);padding:9px;border-radius:9px;font-size:12px}
-.small{font-size:12px;color:var(--muted)}.hidden{display:none!important}.progress{height:6px;background:#dce8e4;border-radius:99px;overflow:hidden;margin:12px 0}.progress span{display:block;height:100%;width:33%;background:var(--teal);transition:width .2s}
-@media(max-width:440px){.mode-grid{grid-template-columns:1fr 1fr}.mode{padding:11px;min-height:130px}.rx-table{font-size:12px}.rx-table th,.rx-table td{padding:7px 3px}.info-grid{grid-template-columns:1fr 1fr}}
+:root{--teal:#0f766e;--pale:#e3f5f1;--ink:#1c2b2d;--muted:#607477;--bg:#f3f8f6;--line:#d8e5e1}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;line-height:1.65}
+header{background:white;border-bottom:1px solid var(--line);padding:18px 16px;position:sticky;top:0;z-index:3}
+h1{font-size:20px;margin:0;color:var(--teal)}header p{margin:3px 0 0;font-size:12px;color:var(--muted)}
+main{max-width:760px;margin:auto;padding:16px 14px 44px}.panel{background:white;border:1px solid var(--line);border-radius:20px;padding:19px;margin:0 0 16px;box-shadow:0 3px 14px #1231}
+h2{font-size:20px;line-height:1.45;margin:8px 0 10px}h3{font-size:17px;margin:0 0 10px}.muted{color:var(--muted)}.badge{display:inline-block;background:var(--pale);color:#075e57;border-radius:99px;padding:4px 12px;font-weight:700;font-size:13px}
+select,button,input,textarea{font:inherit}select{width:100%;padding:12px;border:1px solid #b8ccc6;border-radius:12px;background:white;margin-top:6px}
+.rx{border:1px solid #cbd7d2;border-radius:12px;padding:14px;margin-top:12px;background:#fffefa}.rxhead{display:flex;justify-content:space-between;gap:8px;font-weight:700;border-bottom:1px solid #9caaa5;padding-bottom:8px}.patient{font-size:20px;font-weight:700;margin:5px 0}.rx table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}.rx th,.rx td{text-align:left;padding:8px 4px;border-bottom:1px solid #e2e9e6;vertical-align:top}.rx th{color:#526562}
+.grid{display:grid;grid-template-columns:1fr;gap:9px}.choice{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;cursor:pointer}.choice:has(input:checked){border:2px solid var(--teal);background:#effaf7}.choice input{margin-top:6px;transform:scale(1.15)}
+button{border:0;border-radius:12px;padding:13px 16px;font-weight:700;cursor:pointer}.primary{background:var(--teal);color:white}.secondary{background:#e7efec;color:#23413d}.row{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.row button{flex:1 1 140px}.feedback{margin-top:14px;border-radius:12px;padding:14px;background:#eef8f4;border:1px solid #c5e5d9}.feedback.error{background:#fff5e9;border-color:#f0d6ac}.feedback h3{margin-bottom:5px}.hidden{display:none!important}textarea{width:100%;min-height:100px;padding:12px;border:1px solid #b8ccc6;border-radius:12px;margin-top:8px}ul{padding-left:22px}.small{font-size:13px}
+@media(min-width:600px){.grid{grid-template-columns:1fr 1fr}.panel{padding:23px}}
 </style>
 </head>
 <body>
-<header><div class="eyebrow">PHARMACY TRAINING GAME</div><div class="version">改良版 v2</div><h1>💊 Pharma Detective</h1><p>処方箋から推理する、薬剤師の実務トレーニング</p></header>
+<header><h1>薬剤師の症例トレーニング</h1><p>改良版・動作確認用プロトタイプ｜すべて架空の症例です</p></header>
 <main>
-<div class="notice">学習用の架空症例です。検査値の参考範囲は施設・測定法・患者背景で異なります。実務では検査報告書の基準範囲と最新の添付文書・ガイドライン・施設手順を確認してください。実際の診療・調剤判断の代用にはなりません。</div>
-<details class="guide" open><summary>今回の改良版で確認できること</summary><ul><li>症例を1つずつ進める形式</li><li>選択式で回答し、自由記述欄に根拠や疑義照会文も記入</li><li>検査値がある症例では参考範囲・目安を表示</li><li>回答後に解説と実務上の注意点を確認</li></ul><p><b>検査値の注意：</b>参考範囲は施設・測定法などで異なります。実務では患者の検査報告書と施設手順を優先してください。</p></details>
-<h2>モードを選ぶ</h2>
-<div class="mode-grid" id="modeGrid">
-<button class="mode active" data-mode="disease"><div>🩺</div><strong>疾患推理</strong><span>処方意図・鑑別候補を考える</span></button>
-<button class="mode" data-mode="audit"><div>🔎</div><strong>疑義照会</strong><span>問題点と確認事項を見つける</span></button>
-<button class="mode" data-mode="full"><div>🏥</div><strong>総合実務</strong><span>推理から対応方針まで考える</span></button>
-<button class="mode" data-mode="review"><div>📚</div><strong>学習ポイント</strong><span>この症例の実務上の要点を確認</span></button>
-</div>
-<div class="progress"><span id="progressBar"></span></div>
-<section class="card">
-<div class="casehead"><div><span class="tag" id="caseTag">総合内科・外来</span><div class="case-title" id="caseTitle">症例 001：鎮痛薬が追加された患者</div><div class="sub" id="caseSub">難易度：上級｜架空症例</div></div><span class="tag" id="caseCounter">CASE 01 / 03</span></div>
-<div class="rx-title">処方箋（ゲーム用サンプル）</div>
-<div class="rx-paper">
-<div class="rx-top"><span>処方箋（サンプル）</span><span>処方日：2026年10月25日</span></div>
-<div class="rx-label">患者氏名</div><div class="rx-patient">山田 ○○ 様</div>
-<div class="rx-label">医療機関：さくら内科クリニック（架空）　診療科：内科</div>
-<table class="rx-table"><thead><tr><th>Rp.</th><th>薬品名・規格</th><th>用法・用量</th><th>日数</th></tr></thead><tbody id="rxRows"></tbody></table>
-<div class="rx-foot">※氏名・医療機関・処方内容はすべて架空。実在の処方箋ではありません。</div>
-</div>
-<div class="info-grid" id="patientInfo"></div>
+<section class="panel">
+<h3>学習モード</h3>
+<label for="mode">練習したい内容を選んでね</label>
+<select id="mode">
+<option value="disease">疾患・処方意図を推測</option>
+<option value="audit">処方監査・疑義照会</option>
+<option value="integrated">総合実践（推測＋疑義照会）</option>
+<option value="review">復習モード</option>
+</select>
+<p class="muted small">症例は1件ずつ進みます。選択式の回答と、自由記述の練習ができます。</p>
 </section>
-<section class="card" id="questionCard">
-<div class="prompt" id="questionPrompt">Q1. この処方から考えられる疾患・処方意図は？（複数選択可）</div>
-<div class="options" id="options"></div>
-<div id="freeTextArea" class="hidden" style="margin-top:12px"><div class="prompt" id="freeTextPrompt">自由記述：考えた疾患・処方意図と、その根拠を書いてください</div><textarea id="freeText" placeholder="例：候補となる疾患／そう考えた根拠／追加で確認したい情報"></textarea></div>
-<div class="btnrow"><button class="btn primary" id="checkBtn">回答を確認する</button><button class="btn secondary" id="hintBtn">ヒントを見る</button><button class="btn secondary" id="nextBtn">次の症例 →</button></div>
-<div class="result" id="resultBox" aria-live="polite"></div>
-<div class="small" style="margin-top:12px">評価の考え方：正解の丸暗記より、根拠・追加で確認したい情報・安全な次の一手を重視します。</div>
+<div id="caseArea"></div>
+<section class="panel" id="questionPanel">
+<div class="badge" id="qnum">Q1</div>
+<h2 id="question">この処方から考えられることは？</h2>
+<p class="muted small" id="instruction">当てはまるものを選んでね（複数選択可）。</p>
+<div id="choices" class="grid"></div>
+<div id="freeArea" class="hidden"><label for="freeText"><strong>あなたならどう対応する？</strong></label><textarea id="freeText" placeholder="例：検査値と併用薬を確認し、処方医に疑義照会する…"></textarea></div>
+<div class="row"><button class="primary" id="checkBtn">回答を確認する</button><button class="secondary" id="hintBtn">ヒントを見る</button><button class="secondary" id="nextBtn">次の症例 →</button></div>
+<div id="hint" class="feedback hidden"></div><div id="result" class="feedback hidden" aria-live="polite"></div>
 </section>
+<section class="panel"><h3>このプロトタイプについて</h3><p class="small muted">学習目的の架空症例です。実際の患者の診療・調剤判断には使用せず、実務では最新の添付文書、院内手順、処方医への確認などを優先してください。</p><p class="small muted">回答はこのページ上で判定されます。入力内容は保存・送信されません。</p></section>
 </main>
 <script>
 const cases = [
-{
-tag:"総合内科・外来",title:"症例 001：鎮痛薬が追加された患者",sub:"難易度：上級｜架空症例",
-rx:[
-["1","ロキソプロフェンNa錠 60mg","1回1錠　1日3回 毎食後","7日分"],
-["2","ファモチジン錠 20mg","1回1錠　1日2回 朝夕食後","7日分"],
-["3","アムロジピン錠 5mg","1回1錠　1日1回 朝食後","28日分"]
-],
-info:[["年齢・性別","68歳・男性"],["既往歴","高血圧症"],["主訴","膝の痛み（詳細不明）"],["検査値","腎機能・血圧の直近値は不明"],["併用薬","お薬手帳では上記のみ確認"],["アレルギー","情報未確認"]],
-modeQuestions:{
-disease:{prompt:"Q1. 処方から考えられる疾患・処方意図は？（複数選択可）",options:["変形性膝関節症などの疼痛","痛風発作","胃食道逆流症が主病態","処方だけでは特定できず、症状・診断の確認が必要"],correct:[0,1,3],explain:"鎮痛薬から疼痛への対応は推測できますが、原因疾患は処方だけでは特定できません。膝痛の原因、発症様式、診察所見などが必要です。ファモチジンの併用だけで胃疾患と断定することもできません。"},
-audit:{prompt:"Q1. 薬剤師として優先して確認・評価したい点は？（複数選択可）",options:["腎機能、脱水、消化管出血歴などNSAIDsのリスク","膝痛の経過・原因と鎮痛薬の使用目的","年齢だけを理由に必ず疑義照会する","併用薬・市販薬を含めたNSAIDs重複の有無"],correct:[0,1,3],explain:"腎機能、脱水、消化管リスク、併用薬を確認して個別に評価します。年齢だけで一律に疑義照会と決めつけるのは適切ではありません。確認の結果、処方の妥当性に懸念があれば処方医へ照会します。"},
-full:{prompt:"Q1. 総合判断として最も適切な対応方針は？（複数選択可）",options:["処方だけで疾患を断定し、通常どおり調剤する","患者背景・腎機能・併用薬を確認し、懸念があれば具体的根拠をもって照会する","ファモチジンがあるので消化管リスクは解消されていると判断する","疼痛の経過と処方目的を確認し、必要な服薬指導につなげる"],correct:[1,3],explain:"診断の断定や胃薬併用によるリスク解消の決めつけは避けます。患者情報を確認し、個別のリスクと処方意図を評価したうえで、必要に応じて照会・服薬指導を行います。"}
-},
-hint:"ヒント：処方薬から分かることと、処方薬だけでは分からないことを分けて考えよう。NSAIDsでは腎機能・消化管リスク・併用薬の確認が重要です。",
-free:true,
-review:"実務ポイント：①処方から診断を断定しない。②NSAIDsでは腎機能、脱水、消化管潰瘍・出血歴、抗凝固薬等の併用、他の鎮痛薬を確認。③疑義照会は具体的な懸念と確認したい事項を簡潔に伝える。④薬剤師の判断は患者情報・最新の添付文書・施設手順に基づく。"
-},
-{
-tag:"循環器・外来",title:"症例 002：複数の降圧薬を服用中",sub:"難易度：上級｜検査値あり・架空症例",
-rx:[
-["1","エナラプリル錠 5mg","1回1錠　1日1回 朝食後","28日分"],
-["2","スピロノラクトン錠 25mg","1回1錠　1日1回 朝食後","28日分"],
-["3","イブプロフェン錠 200mg","1回1錠　疼痛時","頓用 10回分"]
-],
-info:[["年齢・性別","76歳・女性"],["既往歴","高血圧症・心不全の記載あり"],["検査値","K 5.5 mEq/L（3日前）<br><span class="small">参考範囲：3.5〜5.0 mEq/L程度</span>"],["腎機能","eGFR 38 mL/min/1.73㎡（3日前）<br><span class="small">目安：成人では90以上が正常範囲の目安。年齢・病態等も考慮</span>"],["症状","最近、食欲低下があるとの申告"],["併用薬","市販鎮痛薬の使用は未確認"]],
-modeQuestions:{
-disease:{prompt:"Q1. 処方背景として考えられるものは？（複数選択可）",options:["高血圧症や心不全の治療","処方薬だけで心不全の病型・重症度まで確定できる","疼痛に対する頓用薬が追加されている可能性","検査値や症状を踏まえた追加確認が必要"],correct:[0,2,3],explain:"エナラプリルとスピロノラクトンは高血圧・心不全等で用いられることがありますが、処方だけで病型や重症度は確定できません。検査値と症状が安全性評価に重要です。"},
-audit:{prompt:"Q1. 最優先で対応を検討する点は？（複数選択可）",options:["K 5.5 mEq/Lという高カリウム血症の値と、ACE阻害薬・MRA併用を速やかに確認する","NSAID頓用の腎機能・心不全への影響を評価する","3日前の検査値なので必ず無視してよい","食欲低下、脱水の可能性、検査値の再確認・緊急性を評価する"],correct:[0,1,3],explain:"この架空症例では高カリウム血症と腎機能低下が示され、併用薬や症状も踏まえた速やかな医療者間連携が必要です。実臨床では患者状態、最新値、施設の緊急対応手順に従います。"},
-full:{prompt:"Q1. 安全性を優先した対応として適切なのは？（複数選択可）",options:["高K値・腎機能・症状を確認し、施設手順に沿って速やかに処方医へ連絡する","処方日数が28日なので次回来局時まで待つ","NSAIDの使用状況も確認し、腎機能・心不全への影響を伝える","検査値だけで自己判断して薬を変更し、医師には連絡しない"],correct:[0,2],explain:"高カリウム血症の値、腎機能、症状、関連薬剤を速やかに共有します。患者の状態によって緊急性が変わるため、現場の緊急対応手順に従い、薬剤師が独断で処方変更しないことが重要です。"}
-},
-hint:"ヒント：カリウム値、腎機能、ACE阻害薬とカリウム保持性利尿薬の併用、NSAIDの影響をセットで考えよう。",
-free:true,
-review:"実務ポイント：この症例は安全性上の優先度が高い設定です。K 5.5 mEq/Lは臨床状況によって緊急対応を要する可能性があり、症状・心電図・再検値などを医療者が評価します。現場では速やかに処方医・担当医療者へ連絡し、地域・施設の緊急手順に従ってください。これは学習用の架空例で、個別患者の治療指示ではありません。"
-},
-{
-tag:"感染症・外来",title:"症例 003：抗菌薬の処方日数を考える",sub:"難易度：上級｜情報不足を見抜く症例",
-rx:[
-["1","アモキシシリンカプセル 250mg","1回2カプセル　1日3回 毎食後","3日分"],
-["2","アセトアミノフェン錠 500mg","1回1錠　発熱時","頓用 10回分"]
-],
-info:[["年齢・性別","34歳・男性"],["受診理由","発熱・咽頭痛"],["診断名","処方箋上の記載なし"],["検査・所見","WBC 12,000/μL、CRP 3.2 mg/dL（架空の検査値）<br><span class="small">参考範囲：WBC 約3,300〜8,600/μL、CRP 0.3 mg/dL以下（施設差あり）</span>"],["アレルギー","ペニシリン系アレルギーの有無不明"],["腎機能","不明"]],
-modeQuestions:{
-disease:{prompt:"Q1. 疾患推測として最も妥当なのは？",options:["細菌性咽頭炎と確定できる","ウイルス性上気道感染症と確定できる","抗菌薬が処方されているが、診断・所見の追加情報が必要","処方薬だけで原因菌まで特定できる"],correct:[2],explain:"抗菌薬が処方されていることだけでは、細菌感染や原因菌を確定できません。症状、診察所見、検査結果、処方意図を確認します。"},
-audit:{prompt:"Q1. 調剤前に確認・評価したい点は？（複数選択可）",options:["ペニシリン系アレルギー歴","感染部位・診断根拠・検査結果と抗菌薬選択の妥当性","年齢・腎機能などを踏まえた用量評価","抗菌薬が出ていれば必ず疑義照会不要"],correct:[0,1,2],explain:"アレルギー、感染症の診断根拠、用量・投与期間の妥当性を確認します。情報不足だけで機械的に疑義照会とするのではなく、必要な情報を集めて処方意図と安全性を評価します。"},
-full:{prompt:"Q1. 総合的に適切な進め方は？（複数選択可）",options:["アレルギー、診断根拠、用量・期間の妥当性を確認する","抗菌薬の処方を見て原因菌を断定する","確認が必要な不明点を整理し、必要なら処方医に照会する","患者に処方意図を説明せず、自己判断で投与日数を変更する"],correct:[0,2],explain:"抗菌薬は感染症の種類、重症度、患者背景などで選択や期間が変わります。薬剤師は不明点を整理し、必要な場合に処方医へ照会します。投与日数を独断で変更しません。"}
-},
-hint:"ヒント：抗菌薬が出ている＝細菌感染確定、ではありません。アレルギー、診断根拠、用量・期間を考えよう。",
-free:true,
-review:"実務ポイント：抗菌薬の妥当性評価には感染部位、症状・診察所見、検査結果、患者背景、アレルギー、腎機能、用量・期間が関わります。情報不足がある場合は、何が分かれば判断できるかを整理して確認します。"
-}
+{dept:"総合内科・外来",title:"症例001：鎮痛薬が追加された患者",level:"中級",patient:"68歳・男性",facility:"さくら内科クリニック（架空）",date:"2026年10月25日",diagnosis:"膝関節痛。高血圧で通院中。",rx:[["アムロジピン錠 5 mg","1日1回 朝食後","28日分"],["ロキソプロフェン錠 60 mg","疼痛時 1回1錠","10回分"],["ファモチジン錠 20 mg","1日1回 夕食後","10日分"]],labs:[["Scr","1.3 mg/dL","男性 約0.65–1.07 mg/dL"],["eGFR","44 mL/min/1.73m²","60以上が目安"]],question:"この処方から考えられる注意点は？",choices:["NSAIDsによる腎機能悪化のリスクを確認する","ロキソプロフェンは腎機能に影響しないので確認不要","高血圧患者ではNSAIDsによる血圧上昇に注意する","胃薬が処方されているので副作用は完全に防げる"],correct:[0,2],hint:"腎機能、血圧、脱水の有無、鎮痛薬の使用頻度を確認して考えてみよう。",explain:"eGFR 44は腎機能低下がある範囲です。ロキソプロフェンなどのNSAIDsは腎機能悪化や血圧上昇、体液貯留につながる場合があります。処方意図・使用期間・患者背景を確認し、必要に応じて処方医や薬剤師間で相談します。ファモチジンがあってもすべてのリスクを防げるわけではありません。"},
+{dept:"循環器・病棟",title:"症例002：高カリウム血症が疑われる患者",level:"上級",patient:"76歳・女性",facility:"みどり総合病院（架空）",date:"2026年10月25日",diagnosis:"心不全・高血圧。食欲低下あり。",rx:[["エナラプリル錠 5 mg","1日1回 朝食後","継続"],["スピロノラクトン錠 25 mg","1日1回 朝食後","継続"],["イブプロフェン錠 200 mg","疼痛時","新規"]],labs:[["K","5.5 mEq/L","3.5–5.0 mEq/L"],["eGFR","38 mL/min/1.73m²","60以上が目安"],["Scr","1.4 mg/dL","女性 約0.46–0.79 mg/dL"]],question:"優先して確認・対応すべき点は？",choices:["K 5.5と併用薬を踏まえ、高カリウム血症のリスクを速やかに確認する","ACE阻害薬＋スピロノラクトン＋NSAIDの併用背景を確認する","食欲低下があっても検査値は無視してよい","処方医へ状況を共有し、緊急性や再検査等を確認する"],correct:[0,1,3],hint:"Kの基準範囲と、腎機能・併用薬がカリウムに与える影響を整理しよう。",explain:"K 5.5 mEq/Lは基準範囲を超えています。ACE阻害薬とスピロノラクトンは高カリウム血症のリスクがあり、NSAIDや腎機能低下、食事・水分摂取の変化も含めて評価が必要です。処方医に速やかに連絡し、症状・心電図・再検査などの必要性を医療チームで判断します。実臨床では施設の緊急対応手順に従います。"},
+{dept:"感染症・外来",title:"症例003：抗菌薬が処方された患者",level:"中級",patient:"34歳・男性",facility:"ひまわり耳鼻咽喉科（架空）",date:"2026年10月25日",diagnosis:"発熱・咽頭痛。処方箋に診断名の記載なし。",rx:[["アモキシシリンカプセル 250 mg","1回2カプセル 1日3回","5日分"],["アセトアミノフェン錠 500 mg","発熱・疼痛時 1回1錠","必要時"]],labs:[["体温","38.2 ℃","平熱の目安 約36–37 ℃"],["アレルギー歴","記載なし","抗菌薬のアレルギー歴を確認"]],question:"調剤前に確認したい項目は？",choices:["ペニシリン系抗菌薬のアレルギー歴を確認する","抗菌薬の適応・用法用量・服用期間を確認する","診断が不明でも何も確認せず調剤する","症状、受診経過、処方意図に疑問があれば処方元へ確認する"],correct:[0,1,3],hint:"安全性と適正使用の観点から、処方箋だけでは分からない情報を考えてみよう。",explain:"アモキシシリンはペニシリン系抗菌薬なので、アレルギー歴の確認が重要です。症状や診断、用法用量、服用期間が妥当かを確認し、不明点や疑問があれば処方元へ問い合わせます。抗菌薬は患者の状態や感染症の種類に応じた適正使用が必要です。"}
 ];
-let current=0, mode='disease', answered=false;
+let index=0;
 const $=id=>document.getElementById(id);
 function render(){
- const c=cases[current]; answered=false;
- $('caseTag').textContent=c.tag;$('caseTitle').textContent=c.title;$('caseSub').textContent=c.sub;$('caseCounter').textContent=`CASE ${String(current+1).padStart(2,'0')} / ${String(cases.length).padStart(2,'0')}`;
- $('rxRows').innerHTML=c.rx.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('');
- $('patientInfo').innerHTML=c.info.map(x=>`<div class="info"><b>${x[0]}</b>${x[1]}</div>`).join('');
- $('progressBar').style.width=((current+1)/cases.length*100)+'%';
- $('resultBox').style.display='none';$('freeText').value='';
- const q=mode==='review'?null:c.modeQuestions[mode];
- if(mode==='review'){
-   $('questionPrompt').textContent='この症例の実務上の学習ポイント';
-   $('options').innerHTML=`<div class="small">${c.review}</div>`;
-   $('freeTextArea').classList.add('hidden');$('checkBtn').classList.add('hidden');$('hintBtn').classList.add('hidden');
- } else {
-   $('questionPrompt').textContent=q.prompt;
-   $('options').innerHTML=q.options.map((o,i)=>`<label class="option"><input type="checkbox" name="answer" value="${i}"><span>${o}</span></label>`).join('');
-   $('freeTextArea').classList.toggle('hidden',!c.free);
-   $('freeTextPrompt').textContent = mode==='disease' ? '自由記述：考えた疾患・処方意図と、その根拠を書いてください' : '自由記述：医師に確認する内容と、その根拠を書いてください';
-   $('freeText').placeholder = mode==='disease' ? '候補となる疾患／そう考えた根拠／追加で確認したい情報' : '例：〇〇のため、△△について確認したい。根拠は……';
-   $('checkBtn').classList.remove('hidden');$('hintBtn').classList.remove('hidden');
- }
- $('nextBtn').textContent=current===cases.length-1?'最初の症例へ ↻':'次の症例 →';
- document.querySelectorAll('.mode').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+ const c=cases[index];
+ $("caseArea").innerHTML=`<section class="panel"><span class="badge">${c.dept}</span><h2>${c.title}</h2><p class="muted">難易度：${c.level}｜架空症例｜CASE ${String(index+1).padStart(2,"0")} / ${cases.length}</p><div class="rx"><div class="rxhead"><span>処方箋（学習用サンプル）</span><span>${c.date}</span></div><p class="muted">患者氏名</p><div class="patient">${c.patient}</div><p class="muted">医療機関：${c.facility}</p><p><strong>背景：</strong>${c.diagnosis}</p><table><thead><tr><th>薬品名・規格</th><th>用法・用量</th><th>日数</th></tr></thead><tbody>${c.rx.map(r=>`<tr>${r.map(v=>`<td>${v}</td>`).join("")}</tr>`).join("")}</tbody></table><h3 style="margin-top:16px">検査値・確認事項</h3><table><thead><tr><th>項目</th><th>患者値</th><th>基準範囲・目安</th></tr></thead><tbody>${c.labs.map(r=>`<tr>${r.map(v=>`<td>${v}</td>`).join("")}</tr>`).join("")}</tbody></table><p class="small muted">※氏名・医療機関・処方内容はすべて架空です。</p></div></section>`;
+ $("qnum").textContent=`Q${index+1}`;
+ $("question").textContent=c.question;
+ $("choices").innerHTML=c.choices.map((v,i)=>`<label class="choice"><input type="checkbox" value="${i}"><span>${v}</span></label>`).join("");
+ $("hint").classList.add("hidden");$("result").classList.add("hidden");$("freeText").value="";
+ const mode=$("mode").value;
+ $("freeArea").classList.toggle("hidden",mode==="disease"||mode==="review");
+ $("instruction").textContent=mode==="audit"?"危険性や確認事項を選び、下欄に疑義照会・対応案を記入してね。":mode==="integrated"?"処方意図と安全性の両方から考え、必要なら対応案も記入してね。":"当てはまるものを選んでね（複数選択可）。";
+ $("nextBtn").textContent=index===cases.length-1?"最初の症例へ ↺":"次の症例 →";
 }
-document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;render()}));
-$('checkBtn').addEventListener('click',()=>{
- if(mode==='review')return;
- const c=cases[current],q=c.modeQuestions[mode];
- const selected=[...document.querySelectorAll('input[name="answer"]:checked')].map(x=>Number(x.value));
- const correct=q.correct;
- const exact=selected.length===correct.length&&selected.every(x=>correct.includes(x));
- const typed=$('freeText').value.trim();
- $('resultBox').style.display='block';
- $('resultBox').innerHTML=`<h3>${exact?'回答を確認しました ✓':'回答を振り返ろう'}</h3><p><b>選んだ項目：</b>${selected.length?selected.map(i=>q.options[i]).join('／'):'未選択'}</p><p><b>重要な考え方：</b>${q.explain}</p>${typed?`<p><b>あなたの記述：</b>${escapeHtml(typed)}</p><p>自由記述は自動採点していません。根拠・確認事項・相手に伝える要点がそろっているか、解説と照らして振り返ってください。</p>`:''}<div class="caution">これは学習用の簡易フィードバックです。正解の選択肢は教育用に設定しており、実際の臨床判断を完全に網羅するものではありません。</div>`;
- answered=true;
+$("checkBtn").addEventListener("click",()=>{
+ const c=cases[index], selected=[...document.querySelectorAll('#choices input:checked')].map(x=>Number(x.value));
+ const correct=c.correct;
+ const ok=selected.length===correct.length&&selected.every(x=>correct.includes(x));
+ const free=$("freeText").value.trim();
+ $("result").classList.remove("hidden");$("result").classList.toggle("error",!ok);
+ $("result").innerHTML=`<h3>${ok?"選択回答：正解！":"選択回答を確認しよう"}</h3><p>${ok?"重要なポイントを押さえられています。":"正解は選択肢 "+correct.map(n=>n+1).join("・")+" です。解説を読んで、もう一度整理してみよう。"}</p><h3>解説</h3><p>${c.explain}</p>${$("mode").value!=="disease"&&$("mode").value!=="review"?`<h3>自由記述</h3><p>${free?`入力内容：${escapeHtml(free)}`:"自由記述は未入力です。必要なら、処方医への確認事項や対応案を書いてみよう。"}</p>`:""}`;
 });
-$('hintBtn').addEventListener('click',()=>{const c=cases[current];$('resultBox').style.display='block';$('resultBox').innerHTML=`<h3>💡 ヒント</h3><p>${c.hint}</p>`});
-$('nextBtn').addEventListener('click',()=>{current=(current+1)%cases.length;render()});
-function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$("hintBtn").addEventListener("click",()=>{$("hint").textContent="ヒント："+cases[index].hint;$("hint").classList.remove("hidden")});
+$("nextBtn").addEventListener("click",()=>{index=(index+1)%cases.length;render();window.scrollTo({top:0,behavior:"smooth"})});
+$("mode").addEventListener("change",render);
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 render();
 </script>
-</body>
-</html>
+</body></html>
