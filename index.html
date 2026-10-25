@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f766e">
-<title>薬剤師の症例トレーニング</title>
+<title>薬剤師の症例トレーニング v3</title>
 <style>
 :root{--teal:#0f766e;--pale:#e3f5f1;--ink:#1c2b2d;--muted:#607477;--bg:#f3f8f6;--line:#d8e5e1}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;line-height:1.65}
@@ -20,7 +20,7 @@ button{border:0;border-radius:12px;padding:13px 16px;font-weight:700;cursor:poin
 </style>
 </head>
 <body>
-<header><h1>薬剤師の症例トレーニング</h1><p>改良版・動作確認用プロトタイプ｜すべて架空の症例です</p></header>
+<header><h1>薬剤師の症例トレーニング</h1><p>v3｜基準範囲は解説欄に表示｜すべて架空の症例です</p></header>
 <main>
 <section class="panel">
 <h3>学習モード</h3>
@@ -55,7 +55,7 @@ let index=0;
 const $=id=>document.getElementById(id);
 function render(){
  const c=cases[index];
- $("caseArea").innerHTML=`<section class="panel"><span class="badge">${c.dept}</span><h2>${c.title}</h2><p class="muted">難易度：${c.level}｜架空症例｜CASE ${String(index+1).padStart(2,"0")} / ${cases.length}</p><div class="rx"><div class="rxhead"><span>処方箋（学習用サンプル）</span><span>${c.date}</span></div><p class="muted">患者氏名</p><div class="patient">${c.patient}</div><p class="muted">医療機関：${c.facility}</p><p><strong>背景：</strong>${c.diagnosis}</p><table><thead><tr><th>薬品名・規格</th><th>用法・用量</th><th>日数</th></tr></thead><tbody>${c.rx.map(r=>`<tr>${r.map(v=>`<td>${v}</td>`).join("")}</tr>`).join("")}</tbody></table><h3 style="margin-top:16px">検査値・確認事項</h3><table><thead><tr><th>項目</th><th>患者値</th><th>基準範囲・目安</th></tr></thead><tbody>${c.labs.map(r=>`<tr>${r.map(v=>`<td>${v}</td>`).join("")}</tr>`).join("")}</tbody></table><p class="small muted">※氏名・医療機関・処方内容はすべて架空です。</p></div></section>`;
+ $("caseArea").innerHTML=`<section class="panel"><span class="badge">${c.dept}</span><h2>${c.title}</h2><p class="muted">難易度：${c.level}｜架空症例｜CASE ${String(index+1).padStart(2,"0")} / ${cases.length}</p><div class="rx"><div class="rxhead"><span>処方箋（学習用サンプル）</span><span>${c.date}</span></div><p class="muted">患者氏名</p><div class="patient">${c.patient}</div><p class="muted">医療機関：${c.facility}</p><p><strong>背景：</strong>${c.diagnosis}</p><table><thead><tr><th>薬品名・規格</th><th>用法・用量</th><th>日数</th></tr></thead><tbody>${c.rx.map(r=>`<tr>${r.map(v=>`<td>${v}</td>`).join("")}</tr>`).join("")}</tbody></table><h3 style="margin-top:16px">検査値・確認事項</h3><table><thead><tr><th>項目</th><th>患者値</th></tr></thead><tbody>${c.labs.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</tbody></table><p class="small muted">※氏名・医療機関・処方内容はすべて架空です。</p></div></section>`;
  $("qnum").textContent=`Q${index+1}`;
  $("question").textContent=c.question;
  $("choices").innerHTML=c.choices.map((v,i)=>`<label class="choice"><input type="checkbox" value="${i}"><span>${v}</span></label>`).join("");
@@ -71,7 +71,7 @@ $("checkBtn").addEventListener("click",()=>{
  const ok=selected.length===correct.length&&selected.every(x=>correct.includes(x));
  const free=$("freeText").value.trim();
  $("result").classList.remove("hidden");$("result").classList.toggle("error",!ok);
- $("result").innerHTML=`<h3>${ok?"選択回答：正解！":"選択回答を確認しよう"}</h3><p>${ok?"重要なポイントを押さえられています。":"正解は選択肢 "+correct.map(n=>n+1).join("・")+" です。解説を読んで、もう一度整理してみよう。"}</p><h3>解説</h3><p>${c.explain}</p>${$("mode").value!=="disease"&&$("mode").value!=="review"?`<h3>自由記述</h3><p>${free?`入力内容：${escapeHtml(free)}`:"自由記述は未入力です。必要なら、処方医への確認事項や対応案を書いてみよう。"}</p>`:""}`;
+ $("result").innerHTML=`<h3>${ok?"選択回答：正解！":"選択回答を確認しよう"}</h3><p>${ok?"重要なポイントを押さえられています。":"正解は選択肢 "+correct.map(n=>n+1).join("・")+" です。解説を読んで、もう一度整理してみよう。"}</p><h3>解説</h3><p>${c.explain}</p><h3>検査値の基準範囲・目安</h3><ul>${c.labs.map(r=>`<li><strong>${r[0]}：</strong>${r[2]}</li>`).join("")}</ul>${$("mode").value!=="disease"&&$("mode").value!=="review"?`<h3>自由記述</h3><p>${free?`入力内容：${escapeHtml(free)}`:"自由記述は未入力です。必要なら、処方医への確認事項や対応案を書いてみよう。"}</p>`:""}`;
 });
 $("hintBtn").addEventListener("click",()=>{$("hint").textContent="ヒント："+cases[index].hint;$("hint").classList.remove("hidden")});
 $("nextBtn").addEventListener("click",()=>{index=(index+1)%cases.length;render();window.scrollTo({top:0,behavior:"smooth"})});
