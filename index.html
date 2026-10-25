@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f766e">
-<title>Pharma Detective｜薬剤師実務推理</title>
+<title>Pharma Detective 改良版｜薬剤師実務推理</title>
 <style>
 :root{--ink:#17252a;--muted:#63747a;--teal:#0f766e;--teal2:#dff5ef;--paper:#f4f7f6;--line:#dbe5e2;--amber:#fff3d6;--red:#fff0ee}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;line-height:1.55}
-header{background:linear-gradient(135deg,#115e59,#0f766e);color:white;padding:22px 18px 26px;border-radius:0 0 24px 24px}
+header{background:linear-gradient(135deg,#115e59,#0f766e);color:white;padding:22px 18px 26px;border-radius:0 0 24px 24px} .version{display:inline-block;background:#fff;color:#115e59;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:800;margin-bottom:5px} .guide{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin:12px 0 16px}.guide summary{font-weight:750;cursor:pointer}.guide p,.guide li{font-size:13px}.guide ul{padding-left:20px;margin-bottom:4px}
 header .eyebrow{font-size:12px;letter-spacing:.12em;opacity:.85}h1{font-size:25px;line-height:1.2;margin:7px 0}header p{margin:8px 0 0;font-size:14px;opacity:.95}
 main{max-width:760px;margin:0 auto;padding:16px 14px 42px}.notice{font-size:12px;color:#67521f;background:var(--amber);padding:11px 12px;border-radius:12px;margin-bottom:16px}
 h2{font-size:19px;margin:20px 0 10px}.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mode{border:1px solid var(--line);background:white;border-radius:15px;padding:14px;text-align:left;color:var(--ink);min-height:120px;cursor:pointer}.mode strong{display:block;font-size:15px;margin:5px 0}.mode span{font-size:12px;color:var(--muted)}.mode.active{border:2px solid var(--teal);background:#effbf7;padding:13px}
@@ -23,9 +23,10 @@ textarea,input[type=text]{width:100%;font:inherit;border:1px solid #cbd8d4;borde
 </style>
 </head>
 <body>
-<header><div class="eyebrow">PHARMACY TRAINING GAME</div><h1>💊 Pharma Detective</h1><p>処方箋から推理する、薬剤師の実務トレーニング</p></header>
+<header><div class="eyebrow">PHARMACY TRAINING GAME</div><div class="version">改良版 v2</div><h1>💊 Pharma Detective</h1><p>処方箋から推理する、薬剤師の実務トレーニング</p></header>
 <main>
 <div class="notice">学習用の架空症例です。検査値の参考範囲は施設・測定法・患者背景で異なります。実務では検査報告書の基準範囲と最新の添付文書・ガイドライン・施設手順を確認してください。実際の診療・調剤判断の代用にはなりません。</div>
+<details class="guide" open><summary>今回の改良版で確認できること</summary><ul><li>症例を1つずつ進める形式</li><li>選択式で回答し、自由記述欄に根拠や疑義照会文も記入</li><li>検査値がある症例では参考範囲・目安を表示</li><li>回答後に解説と実務上の注意点を確認</li></ul><p><b>検査値の注意：</b>参考範囲は施設・測定法などで異なります。実務では患者の検査報告書と施設手順を優先してください。</p></details>
 <h2>モードを選ぶ</h2>
 <div class="mode-grid" id="modeGrid">
 <button class="mode active" data-mode="disease"><div>🩺</div><strong>疾患推理</strong><span>処方意図・鑑別候補を考える</span></button>
@@ -35,7 +36,7 @@ textarea,input[type=text]{width:100%;font:inherit;border:1px solid #cbd8d4;borde
 </div>
 <div class="progress"><span id="progressBar"></span></div>
 <section class="card">
-<div class="casehead"><div><span class="tag" id="caseTag">総合内科・外来</span><div class="case-title" id="caseTitle">症例 001：鎮痛薬が追加された患者</div><div class="sub" id="caseSub">難易度：上級｜架空症例</div></div><span class="tag">CASE 01</span></div>
+<div class="casehead"><div><span class="tag" id="caseTag">総合内科・外来</span><div class="case-title" id="caseTitle">症例 001：鎮痛薬が追加された患者</div><div class="sub" id="caseSub">難易度：上級｜架空症例</div></div><span class="tag" id="caseCounter">CASE 01 / 03</span></div>
 <div class="rx-title">処方箋（ゲーム用サンプル）</div>
 <div class="rx-paper">
 <div class="rx-top"><span>処方箋（サンプル）</span><span>処方日：2026年10月25日</span></div>
@@ -112,7 +113,7 @@ let current=0, mode='disease', answered=false;
 const $=id=>document.getElementById(id);
 function render(){
  const c=cases[current]; answered=false;
- $('caseTag').textContent=c.tag;$('caseTitle').textContent=c.title;$('caseSub').textContent=c.sub;
+ $('caseTag').textContent=c.tag;$('caseTitle').textContent=c.title;$('caseSub').textContent=c.sub;$('caseCounter').textContent=`CASE ${String(current+1).padStart(2,'0')} / ${String(cases.length).padStart(2,'0')}`;
  $('rxRows').innerHTML=c.rx.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('');
  $('patientInfo').innerHTML=c.info.map(x=>`<div class="info"><b>${x[0]}</b>${x[1]}</div>`).join('');
  $('progressBar').style.width=((current+1)/cases.length*100)+'%';
