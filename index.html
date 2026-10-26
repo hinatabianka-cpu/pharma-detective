@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<title>薬剤師の症例トレーニング v6</title>
+<style>
+:root{--teal:#0f766e;--pale:#e3f5f1;--ink:#1c2b2d;--muted:#607477;--bg:#f3f8f6;--line:#d8e5e1}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;line-height:1.65}
+header{background:white;border-bottom:1px solid var(--line);padding:16px;position:sticky;top:0;z-index:3}h1{font-size:20px;margin:0;color:var(--teal)}header p{margin:3px 0 0;font-size:12px;color:var(--muted)}
+main{max-width:760px;margin:auto;padding:16px 14px 44px}.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:17px;margin:0 0 15px;box-shadow:0 3px 14px #1231}
+h2{font-size:20px;line-height:1.45;margin:8px 0 10px}h3{font-size:17px;margin:0 0 9px}.muted{color:var(--muted)}.badge{display:inline-block;background:var(--pale);color:#075e57;border-radius:99px;padding:4px 11px;font-weight:700;font-size:13px}
+select,button,textarea{font:inherit}select{width:100%;padding:11px;border:1px solid #b8ccc6;border-radius:11px;background:white;margin:5px 0 10px}
+.rx{border:1px solid #cbd7d2;border-radius:12px;padding:13px;margin-top:12px;background:#fffefa}.rxhead{display:flex;justify-content:space-between;gap:8px;font-weight:700;border-bottom:1px solid #9caaa5;padding-bottom:8px}.patient{font-size:19px;font-weight:700;margin:5px 0}.rx table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}.rx th,.rx td{text-align:left;padding:8px 4px;border-bottom:1px solid #e2e9e6;vertical-align:top}.rx th{color:#526562}
+.grid{display:grid;grid-template-columns:1fr;gap:9px}.choice{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;cursor:pointer}.choice:has(input:checked){border:2px solid var(--teal);background:#effaf7}.choice input{margin-top:6px;transform:scale(1.15)}
+button{border:0;border-radius:11px;padding:12px 14px;font-weight:700;cursor:pointer}.primary{background:var(--teal);color:white}.secondary{background:#e7efec;color:#23413d}.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}.row button{flex:1 1 130px}.feedback{margin-top:13px;border-radius:12px;padding:13px;background:#eef8f4;border:1px solid #c5e5d9}.feedback.error{background:#fff5e9;border-color:#f0d6ac}.hidden{display:none!important}textarea{width:100%;min-height:90px;padding:11px;border:1px solid #b8ccc6;border-radius:11px;margin-top:7px}.small{font-size:13px}ul{padding-left:22px}
+@media(min-width:600px){.grid{grid-template-columns:1fr 1fr}.panel{padding:22px}}
+</style>
+</head>
+<body>
+<header><h1>薬剤師の症例トレーニング</h1><p>v6｜中級4症例・上級6症例｜対応例つき解説｜すべて架空の症例です</p></header>
+<main>
+<section class="panel">
+<h3>学習モード</h3>
+<label for="mode">練習内容</label>
+<select id="mode"><option value="integrated">総合実践（推測＋安全性）</option><option value="audit">処方監査・疑義照会</option><option value="disease">処方意図・注意点の推測</option></select>
+<label for="level">難易度</label>
+<select id="level"><option value="all">すべて</option><option value="基本">基本</option><option value="中級">中級</option><option value="上級">上級</option></select>
+<p class="muted small">中級4症例・上級6症例。複数選択に加え、優先順位・追加確認事項・処方医への伝え方を自由記述で整理してください。回答後に解説を確認できます。</p>
+</section>
+<div id="caseArea"></div>
+<section class="panel" id="questionPanel">
+<div class="badge" id="qnum">Q1</div><h2 id="question"></h2><p class="muted small" id="instruction">当てはまるものを選んでね（複数選択可）。</p>
+<div id="choices" class="grid"></div>
+<div id="freeArea"><label for="freeText"><strong>臨床推論：優先順位・追加確認・連携案（推奨）</strong></label><textarea id="freeText" placeholder="①最も優先するリスクと根拠 ②追加で確認する患者情報・検査値 ③処方医へ伝える内容／緊急度 ④患者への説明・フォロー計画"></textarea></div>
+<div class="row"><button class="primary" id="checkBtn">回答を確認する</button><button class="secondary" id="hintBtn">ヒントを見る</button><button class="secondary" id="nextBtn">次の症例 →</button></div>
+<div id="hint" class="feedback hidden"></div><div id="result" class="feedback hidden" aria-live="polite"></div>
+</section>
+<section class="panel"><h3>学習上の注意</h3><p class="small muted">学習目的の架空症例です。実際の患者の診療・調剤判断には使用しないでください。実務では最新の添付文書、診療ガイドライン、院内手順、処方医への確認を優先してください。検査値と基準範囲の目安は回答後の解説に表示します。基準範囲や用量は施設・患者背景などで異なります。</p><p class="small muted">回答内容はこのページから送信されません。ブラウザを閉じると回答履歴は保存されません。</p></section>
+</main>
+<script>
+const cases = [
+{dept:"総合内科・外来",title:"症例001：鎮痛薬が追加された患者",level:"中級",patient:"68歳・男性",facility:"さくら内科クリニック（架空）",diagnosis:"膝関節痛。高血圧で通院中。",rx:[["アムロジピン錠 5 mg","1日1回 朝食後","継続"],["ロキソプロフェン錠 60 mg","疼痛時 1回1錠","10回分"],["ファモチジン錠 20 mg","1日1回 夕食後","10日分"]],labs:[["Scr","1.3 mg/dL","男性の基準範囲は検査室により異なる"],["eGFR","44 mL/min/1.73m²","60以上が一般的な目安"]],question:"この処方から考えられる注意点は？",choices:["NSAIDsによる腎機能悪化のリスクを確認する","ロキソプロフェンは腎機能に影響しないので確認不要","高血圧患者ではNSAIDsによる血圧上昇に注意する","胃薬が処方されていれば副作用は完全に防げる"],correct:[0,2],hint:"腎機能、血圧、脱水の有無、鎮痛薬の使用頻度を確認しよう。",explain:"eGFR 44は腎機能低下がある範囲です。ロキソプロフェンなどのNSAIDsは腎機能悪化、血圧上昇、体液貯留につながる場合があります。胃薬があってもすべてのリスクを防げるわけではありません。",action:"①鎮痛薬の使用頻度・期間、脱水症状、尿量、血圧を確認する。②腎機能低下を踏まえ、NSAID継続の必要性や代替策について処方医に相談する。③自己判断で市販NSAIDを追加しないこと、体調変化時は相談することを説明する。"},
+{dept:"循環器・病棟",title:"症例002：高カリウム血症が疑われる患者",level:"上級",patient:"76歳・女性",facility:"みどり総合病院（架空）",diagnosis:"心不全・高血圧。食欲低下あり。ここ2日ほど水分摂取が減り、ふらつきもある。採血は外来受診時。",rx:[["エナラプリル錠 5 mg","1日1回 朝食後","継続"],["スピロノラクトン錠 25 mg","1日1回 朝食後","継続"],["イブプロフェン錠 200 mg","疼痛時","新規"]],labs:[["K","5.5 mEq/L","約3.5–5.0 mEq/Lが一般的な目安"],["eGFR","38 mL/min/1.73m²","60以上が一般的な目安"]],question:"複数のリスクが重なっている。最初に行う評価と、処方医へ伝えるべき情報の組み合わせは？",choices:["K高値と併用薬を踏まえ、高カリウム血症のリスクを速やかに確認する","ACE阻害薬＋スピロノラクトン＋NSAIDの併用背景を確認する","食欲低下があっても検査値は無視してよい","処方医へ状況を共有し、緊急性や再検査などを確認する"],correct:[0,1,3],hint:"Kの値、腎機能、併用薬がカリウムに与える影響を整理しよう。",explain:"K 5.5 mEq/Lは一般的な基準範囲を超えています。ACE阻害薬とスピロノラクトンは高カリウム血症のリスクがあり、NSAIDや腎機能低下も評価が必要です。採血条件や症状も確認し、処方医へ速やかに連絡します。",action:"①検査値の採血時刻・溶血の可能性・症状を確認する。②K高値、腎機能、併用薬を処方医へ共有する。③再検査、心電図、薬剤調整などは医師の判断と施設手順に従う。動悸、筋力低下、失神などがあれば緊急性を優先する。"},
+{dept:"感染症・外来",title:"症例003：抗菌薬が処方された患者",level:"中級",patient:"34歳・男性",facility:"ひまわり耳鼻咽喉科（架空）",diagnosis:"発熱・咽頭痛。処方箋に診断名の記載なし。",rx:[["アモキシシリンカプセル 250 mg","1回2カプセル 1日3回","5日分"],["アセトアミノフェン錠 500 mg","発熱・疼痛時 1回1錠","必要時"]],labs:[["体温","38.2 ℃","症状・経過と合わせて評価"],["アレルギー歴","記載なし","ペニシリン系薬の反応歴を確認"]],question:"調剤前に確認したい項目は？",choices:["ペニシリン系抗菌薬のアレルギー歴を確認する","抗菌薬の適応・用法用量・服用期間を確認する","診断が不明でも何も確認せず調剤する","疑問があれば処方元へ確認する"],correct:[0,1,3],hint:"安全性と適正使用の観点から、処方箋だけでは分からない情報を考えよう。",explain:"アモキシシリンはペニシリン系抗菌薬なので、アレルギー歴の確認が重要です。症状や診断、用法用量、期間が妥当か確認し、不明点があれば処方元へ問い合わせます。",action:"①過去のアレルギー反応の内容と重症度を確認する。②診断・用量・回数・日数、腎機能や併用薬など必要情報を確認する。③疑問があれば調剤前に照会し、服用方法や発疹・呼吸困難などの受診目安を説明する。"},
+{dept:"糖尿病・外来",title:"症例004：腎機能が低下した糖尿病患者",level:"上級",patient:"72歳・男性",facility:"あおぞら内科（架空）",diagnosis:"2型糖尿病。食欲低下があり、数日間下痢が続いている。普段の飲水量より少なく、尿量も減ったと話す。",rx:[["メトホルミン錠 500 mg","1回1錠 1日2回 食後","継続"],["シタグリプチン錠 50 mg","1日1回 朝食後","継続"]],labs:[["eGFR","28 mL/min/1.73m²","腎機能に応じた使用可否・用量確認が必要"],["血糖","142 mg/dL","採血条件・状況と合わせて評価"],["症状","下痢・食欲低下","脱水の有無を確認"]],question:"腎機能低下と急性の体調変化が重なっている。薬剤師が優先して整理・連携すべき内容は？",choices:["eGFR 28と体調不良を踏まえ、メトホルミンの継続可否を速やかに処方医へ確認する","下痢があっても脱水リスクは考えなくてよい","腎機能に応じた薬剤用量・使用可否の確認が必要","体調不良時の対応と受診目安を確認する"],correct:[0,2,3],hint:"腎機能の数値だけでなく、下痢による脱水など一時的な変化も考えよう。",explain:"eGFR 28は高度の腎機能低下にあたります。メトホルミンは腎機能や急性疾患・脱水などの状況によって重要な使用上の注意があります。シタグリプチンも腎機能に応じた用量確認が必要です。継続・中止は薬剤師だけで決めず、処方医へ速やかに確認します。",action:"①下痢の期間、飲水量、尿量、発熱・嘔吐を聞き取る。②eGFRと体調不良を処方医へ伝え、メトホルミンの使用可否と各薬剤の腎機能に応じた用量を確認する。③飲食できない、尿量が著しく少ないなどの場合は速やかな医療評価につなぐ。"},
+{dept:"糖尿病・病棟",title:"症例005：低血糖が疑われる患者",level:"中級",patient:"65歳・女性",facility:"みどり総合病院（架空）",diagnosis:"2型糖尿病。朝食をほとんど食べられず、冷汗と手の震えがある。",rx:[["グリメピリド錠 1 mg","1日1回 朝食直前","継続"],["インスリン製剤","使用中（詳細確認）","継続"]],labs:[["血糖","58 mg/dL","一般に70 mg/dL未満は低血糖を疑う"],["食事摂取","朝食ほぼ摂取できず","摂取状況を確認"]],question:"まず優先すべき対応は？",choices:["低血糖の可能性を評価し、意識・嚥下状態と血糖を確認する","食事を食べていない場合でも薬の影響は考えなくてよい","医療機関の低血糖対応手順に沿って速やかに対応する","食事量や糖尿病薬の使い方を確認し、再発予防を検討する"],correct:[0,2,3],hint:"数値、症状、食事摂取、使用中の薬を合わせて考えよう。",explain:"血糖58 mg/dLに冷汗・振戦があり、低血糖が疑われます。意識状態と安全に飲み込めるかを確認し、施設の低血糖対応手順に従います。意識障害や嚥下困難がある人に無理に飲食させてはいけません。",action:"①意識・嚥下状態を確認し、院内手順に従って速やかに対応する。②意識障害・けいれん・嚥下困難があれば経口摂取させず、緊急対応を要請する。③改善後も再低下に注意し、食事摂取、インスリン投与、グリメピリド服用状況を医療チームで確認する。"},
+{dept:"循環器・外来",title:"症例006：抗凝固薬使用中の患者",level:"上級",patient:"79歳・男性",facility:"さくら循環器クリニック（架空）",diagnosis:"心房細動で抗凝固療法中。腰痛のため市販鎮痛薬を追加したいと相談。最近、転倒して側腹部を打ったが、受診していない。",rx:[["アピキサバン錠 5 mg","1日2回","継続"],["市販イブプロフェン","本人が追加を検討","未使用"]],labs:[["Hb","未確認","出血症状・検査情報を確認"],["症状","黒色便・血尿など未確認","出血兆候を確認"]],question:"出血リスク評価に加え、転倒後の症状も踏まえて優先すべき対応は？",choices:["抗凝固薬とNSAIDの併用による出血リスクを説明し、使用前に医療者へ相談するよう伝える","市販薬なので相互作用の確認は不要","出血兆候や他の併用薬を確認する","痛みの程度や原因、代替策を医療者と検討する"],correct:[0,2,3],hint:"処方薬だけでなく、市販薬・サプリメントも含めて確認しよう。",explain:"アピキサバンなどの抗凝固薬を使用している患者では、NSAIDの併用により出血リスクが高まる可能性があります。市販薬も薬物療法全体の一部として確認します。出血が疑われる症状があれば速やかな医療評価が必要です。",action:"①黒色便、血尿、吐血、止まりにくい出血、強い頭痛などの有無を確認する。②イブプロフェンを自己判断で追加しないよう伝える。③痛みの原因・程度、他の薬やサプリメントを確認し、適切な鎮痛方法を医療者と検討する。"},
+{dept:"地域薬局・内科",title:"症例007：ワルファリンと新規抗菌薬",level:"上級",patient:"81歳・女性",facility:"こもれび薬局／みなと内科（架空）",diagnosis:"心房細動でワルファリンを使用中。尿路感染症に対してST合剤が追加された。食事量が落ち、数日前から新しい市販サプリメントも開始した。",rx:[["ワルファリン錠","処方指示どおり","継続"],["ST合剤","1日2回","新規・7日分"]],labs:[["PT-INR","直近値不明","目標範囲は適応・背景により異なる"],["出血症状","未確認","血尿・黒色便などを確認"]],question:"相互作用に加えて食事量やサプリメントの変化がある。調剤前後の優先確認事項は？",choices:["ST合剤とワルファリンの相互作用によるINR上昇・出血リスクを確認する","直近のINR、ワルファリン用量、出血症状を確認する","相互作用があっても患者に伝えず通常どおり服用する","処方医と連携し、INR確認時期などを相談する"],correct:[0,1,3],hint:"相互作用の有無だけでなく、検査値・出血症状・モニタリング計画を確認しよう。",explain:"ST合剤はワルファリンの作用を増強し、PT-INR上昇や出血リスクを高めることがあります。併用が必要な場合もあるため、一律に中止を判断せず、処方意図と管理計画を確認します。",action:"①直近のPT-INR、ワルファリンの用量・服薬状況、併用薬、出血症状を確認する。②相互作用を処方医へ伝え、抗菌薬の選択・期間とINR再確認時期を相談する。③血尿、黒色便、吐血、止まりにくい出血があれば速やかな医療評価につなげる。"},
+{dept:"病院薬剤部・腎臓内科",title:"症例008：腎機能低下患者の抗菌薬",level:"上級",patient:"74歳・男性",facility:"みどり総合病院（架空）",diagnosis:"肺炎で入院中。腎機能低下があり、抗菌薬が開始された。入院前から利尿薬を使用し、食事摂取低下もある。心電図は入院時未確認。",rx:[["レボフロキサシン錠 500 mg","1日1回（指示内容確認）","新規"],["ソタロール錠","定期処方","継続"]],labs:[["eGFR","25 mL/min/1.73m²","腎機能に応じた投与量確認が必要"],["QTc","未確認","心電図所見を確認"],["K","3.4 mEq/L","約3.5–5.0 mEq/Lが一般的な目安"]],question:"腎機能・電解質・QT延長リスクが重なっている。優先順位をつけて確認・連携すべき点は？",choices:["腎機能に応じたレボフロキサシンの用法・用量を確認する","ソタロールとの併用によるQT延長リスクや電解質異常を確認する","腎機能や心電図を確認せず標準用量のままでよいと判断する","処方医へ確認し、必要なモニタリングや代替薬を相談する"],correct:[0,1,3],hint:"腎機能による薬物蓄積と、QT延長に関係する併用薬・電解質を分けて整理しよう。",explain:"レボフロキサシンは腎機能に応じた用量確認が必要です。また、ソタロールとレボフロキサシンはいずれもQT延長に関係し得るため、併用時は心電図、電解質、他のリスク因子を確認します。具体的な用量は適応や最新の添付文書・院内基準に基づいて判断します。",action:"①最新の腎機能、透析の有無、感染症の重症度、処方量・投与間隔を確認する。②併用薬、K低値、QTc未確認を処方医へ共有し、用量・代替薬・モニタリングを相談する。③動悸、失神などがあれば速やかに医療チームへ報告する。"},
+{dept:"地域薬局・総合感冒薬相談",title:"症例009：解熱鎮痛薬の重複",level:"上級",patient:"46歳・女性",facility:"さくら薬局（架空）",diagnosis:"発熱と頭痛があり、処方薬に加えて市販の総合感冒薬を使いたいと相談。昨日から同成分を含む可能性のある別の市販薬も使用しているが、商品名を覚えていない。",rx:[["アセトアミノフェン錠 500 mg","発熱時 1回1錠","処方あり"],["市販総合感冒薬","本人が購入を検討","成分未確認"]],labs:[["体重","52 kg","用量確認では体重等も考慮"],["肝疾患・飲酒","未確認","肝機能・飲酒状況・他剤を確認"]],question:"成分が特定できない市販薬を複数使用している。安全に使用可否を判断するための対応は？",choices:["総合感冒薬にアセトアミノフェンが含まれていないか確認する","処方薬と市販薬の合計服用量・服用間隔を確認する","市販薬は成分が重複しないので確認不要と伝える","肝疾患、飲酒状況、他の鎮痛薬の使用も聞き取る"],correct:[0,1,3],hint:"商品名だけで判断せず、有効成分の重複と1日の総量を確認しよう。",explain:"総合感冒薬にはアセトアミノフェンが含まれる製品があり、処方薬との重複で意図せず総投与量が増える可能性があります。適切な用量は製品、年齢、体重、肝機能などで異なるため、成分と用法を確認します。",action:"①市販薬の商品名・成分・用法を確認し、処方薬との重複を確認する。②合計服用量、服用間隔、肝疾患・飲酒状況を確認する。③重複がある場合は自己判断で併用しないよう説明し、症状に合う代替策を案内する。"},
+{dept:"病棟・糖尿病チーム",title:"症例010：ステロイド開始後の血糖上昇",level:"中級",patient:"59歳・男性",facility:"みどり総合病院（架空）",diagnosis:"喘息増悪で全身性ステロイドが開始された。2型糖尿病の既往がある。",rx:[["プレドニゾロン錠","医師指示の用量","新規"],["メトホルミン錠","定期処方","継続指示あり"]],labs:[["血糖（昼食前）","236 mg/dL","目標値は患者状態により個別設定"],["eGFR","58 mL/min/1.73m²","60以上が一般的な目安"],["食事摂取","概ね良好","摂取量の変化を継続確認"]],question:"薬剤師として適切な観察・連携は？",choices:["ステロイド開始後の血糖推移と測定タイミングを医療チームと確認する","薬剤師が独断で糖尿病薬を増量する","ステロイドの投与時刻・用量、食事摂取を確認する","高血糖が続く場合は医師・糖尿病チームへ共有する"],correct:[0,2,3],hint:"ステロイドによる血糖変動は投与時刻や食事と関係することがある。",explain:"全身性ステロイドは血糖を上昇させることがあります。測定時刻によって高血糖が見つかりやすい時間帯が異なる場合があるため、投与時刻、食事、血糖推移を合わせて評価します。糖尿病薬の調整は医療チームで判断します。",action:"①ステロイドの用量・投与時刻、血糖推移、食事摂取、感染徴候を確認する。②測定タイミングや高血糖時の報告基準を病棟チームと共有する。③高血糖が持続する場合は医師・糖尿病チームに情報提供し、治療計画の見直しを相談する。薬剤師が独断で糖尿病薬を増減しない。"}
+];
+let index=0, shown=[];
+const $=id=>document.getElementById(id);
+function filtered(){const l=$("level").value;return cases.map((c,i)=>({...c,original:i})).filter(c=>l==="all"||c.level===l)}
+function render(){
+ shown=filtered();if(!shown.length){$("caseArea").innerHTML="<section class='panel'>該当する症例がありません。</section>";return}
+ if(index>=shown.length)index=0;
+ const c=shown[index];
+ $("caseArea").innerHTML=`<section class="panel"><span class="badge">${c.dept}</span><h2>${c.title}</h2><p class="muted small">難易度：${c.level}｜CASE ${index+1} / ${shown.length}</p><div class="rx"><div class="rxhead"><span>処方箋（学習用）</span><span>架空症例</span></div><p class="muted small">患者</p><div class="patient">${c.patient}</div><p class="muted small">医療機関：${c.facility}</p><p><strong>背景：</strong>${c.diagnosis}</p><table><thead><tr><th>薬品名・規格</th><th>用法・用量</th><th>日数・状況</th></tr></thead><tbody>${c.rx.map(r=>`<tr>${r.map(v=>`<td>${v}</td>`).join("")}</tr>`).join("")}</tbody></table><p class="small muted">※氏名・医療機関・処方内容はすべて架空です。</p></div></section>`;
+ $("qnum").textContent=`Q${index+1}`;$("question").textContent=c.question;
+ $("choices").innerHTML=c.choices.map((v,i)=>`<label class="choice"><input type="checkbox" value="${i}"><span>${v}</span></label>`).join("");
+ $("hint").classList.add("hidden");$("result").classList.add("hidden");$("freeText").value="";
+ $("instruction").textContent=$("mode").value==="audit"?"危険性や確認事項を選び、下欄に対応案を記入してね。":$("mode").value==="disease"?"処方意図・疾患背景・注意点を考えてみよう。":"当てはまるものを選んでね（複数選択可）。";
+ $("nextBtn").textContent=index===shown.length-1?"最初の症例へ ↺":"次の症例 →";
+}
+$("checkBtn").addEventListener("click",()=>{
+ const c=shown[index], selected=[...document.querySelectorAll('#choices input:checked')].map(x=>Number(x.value));
+ const ok=selected.length===c.correct.length&&selected.every(x=>c.correct.includes(x));
+ const free=$("freeText").value.trim();
+ $("result").classList.remove("hidden");$("result").classList.toggle("error",!ok);
+ $("result").innerHTML=`<h3>${ok?"選択回答：正解！":"選択回答を確認しよう"}</h3><p>${ok?"重要なポイントを押さえられています。":"正解は選択肢 "+c.correct.map(n=>n+1).join("・")+" です。解説を読んで整理してみよう。"}</p><h3>解説</h3><p>${c.explain}</p><h3>薬剤師としての対応例</h3><p>${c.action}</p><h3>検査値・確認事項</h3><ul>${c.labs.map(r=>`<li><strong>${r[0]}（患者値：${r[1]}）：</strong>${r[2]}</li>`).join("")}</ul><h3>あなたの対応案</h3><p>${free?escapeHtml(free):"自由記述は未入力です。必要なら対応案を書いてみよう。"}</p>`;
+});
+$("hintBtn").addEventListener("click",()=>{$("hint").textContent="ヒント："+shown[index].hint;$("hint").classList.remove("hidden")});
+$("nextBtn").addEventListener("click",()=>{index=(index+1)%shown.length;render();window.scrollTo({top:0,behavior:"smooth"})});
+$("mode").addEventListener("change",render);$("level").addEventListener("change",()=>{index=0;render()});
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+render();
+</script>
+</body></html>
